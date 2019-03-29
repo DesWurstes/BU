@@ -1,0 +1,8 @@
+argon2
+icon.blend
+lzma-sdk
+ocb
+xxhash
+closure-compiler.command
+# TODO this shouldnt happen
+*.
