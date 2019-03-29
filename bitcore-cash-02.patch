@@ -1,0 +1,34 @@
+diff --git a/packages/bitcore-lib-cash/lib/transaction/input/multisig.js b/packages/bitcore-lib-cash/lib/transaction/input/multisig.js
+index 28f00ab6..e90a41dc 100644
+--- a/packages/bitcore-lib-cash/lib/transaction/input/multisig.js
++++ b/packages/bitcore-lib-cash/lib/transaction/input/multisig.js
+@@ -24,11 +24,7 @@ function MultiSigInput(input, pubkeys, threshold, signatures, opts) {
+   pubkeys = pubkeys || input.publicKeys;
+   threshold = threshold || input.threshold;
+   signatures = signatures || input.signatures;
+-  if (opts.noSorting) {
+-    this.publicKeys = pubkeys
+-  } else  {
+-    this.publicKeys = _.sortBy(pubkeys, function(publicKey) { return publicKey.toString('hex'); });
+-  }
++  this.publicKeys = pubkeys
+   $.checkState(Script.buildMultisigOut(this.publicKeys, threshold).equals(this.output.script),
+     'Provided public keys don\'t match to the provided output script');
+   this.publicKeyIndex = {};
+diff --git a/packages/bitcore-lib-cash/lib/transaction/input/multisigscripthash.js b/packages/bitcore-lib-cash/lib/transaction/input/multisigscripthash.js
+index 1e908e27..9bb69578 100644
+--- a/packages/bitcore-lib-cash/lib/transaction/input/multisigscripthash.js
++++ b/packages/bitcore-lib-cash/lib/transaction/input/multisigscripthash.js
+@@ -24,11 +24,7 @@ function MultiSigScriptHashInput(input, pubkeys, threshold, signatures, opts) {
+   pubkeys = pubkeys || input.publicKeys;
+   threshold = threshold || input.threshold;
+   signatures = signatures || input.signatures;
+-  if (opts.noSorting) {
+-    this.publicKeys = pubkeys
+-  } else  {
+-    this.publicKeys = _.sortBy(pubkeys, function(publicKey) { return publicKey.toString('hex'); });
+-  }
++  this.publicKeys = pubkeys
+   this.redeemScript = Script.buildMultisigOut(this.publicKeys, threshold);
+   $.checkState(Script.buildScriptHashOut(this.redeemScript).equals(this.output.script),
+                'Provided public keys don\'t hash to the provided output');

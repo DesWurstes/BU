@@ -1,0 +1,7 @@
+*.o
+*.out
+util.wasm
+util.js
+utf.js/
+icon.blend
+out/

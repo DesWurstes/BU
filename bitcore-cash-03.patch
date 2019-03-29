@@ -1,0 +1,23 @@
+diff --git a/packages/bitcore-lib-cash/lib/script/script.js b/packages/bitcore-lib-cash/lib/script/script.js
+index 3d341cfc..d4613bda 100644
+--- a/packages/bitcore-lib-cash/lib/script/script.js
++++ b/packages/bitcore-lib-cash/lib/script/script.js
+@@ -721,16 +721,8 @@ Script.buildMultisigOut = function(publicKeys, threshold, opts) {
+   opts = opts || {};
+   var script = new Script();
+   script.add(Opcode.smallInt(threshold));
+-  publicKeys = _.map(publicKeys, PublicKey);
+-  var sorted = publicKeys;
+-  if (!opts.noSorting) {
+-    sorted = _.sortBy(publicKeys, function(publicKey) {
+-      return publicKey.toString('hex');
+-    });
+-  }
+-  for (var i = 0; i < sorted.length; i++) {
+-    var publicKey = sorted[i];
+-    script.add(publicKey.toBuffer());
++  for (var i = 0; i < publicKeys.length; i++) {
++    script.add(publicKeys[i]);
+   }
+   script.add(Opcode.smallInt(publicKeys.length));
+   script.add(Opcode.OP_CHECKMULTISIG);
