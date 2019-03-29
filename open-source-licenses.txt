@@ -1,0 +1,111 @@
+├─ base-x@3.0.5
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/cryptocoinjs/base-x
+│  ├─ publisher: Daniel Cousens
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/base-x
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/base-x/LICENSE.md
+├─ bitcore-lib-cash@8.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/bitpay/bitcore-lib/tree/cash
+│  ├─ publisher: BitPay
+│  ├─ email: dev@bitpay.com
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash
+│  └─ licenseFile: LICENSE
+├─ bitcore-lib@8.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/bitpay/bitcore-lib
+│  ├─ publisher: BitPay
+│  ├─ email: dev@bitpay.com
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib
+│  └─ licenseFile: node_modules/bitcore-lib/LICENSE
+├─ bn.js@4.11.8
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/indutny/bn.js
+│  ├─ publisher: Fedor Indutny
+│  ├─ email: fedor@indutny.com
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/bn.js
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/bn.js/README.md
+├─ brorand@1.1.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/indutny/brorand
+│  ├─ publisher: Fedor Indutny
+│  ├─ email: fedor@indutny.com
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/brorand
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/brorand/README.md
+├─ bs58@4.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/cryptocoinjs/bs58
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/bs58
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/bs58/README.md
+├─ buffer-compare@1.1.1
+│  ├─ licenses: MIT*
+│  ├─ repository: https://github.com/soldair/node-buffer-compare
+│  ├─ publisher: Ryan Day
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/buffer-compare
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/buffer-compare/LICENSE
+├─ elliptic@6.4.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/indutny/elliptic
+│  ├─ publisher: Fedor Indutny
+│  ├─ email: fedor@indutny.com
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/elliptic
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/elliptic/README.md
+├─ hash.js@1.1.5
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/indutny/hash.js
+│  ├─ publisher: Fedor Indutny
+│  ├─ email: fedor@indutny.com
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/hash.js
+│  └─ licenseFile: node_modules/hash.js/README.md
+├─ hash.js@1.1.7
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/indutny/hash.js
+│  ├─ publisher: Fedor Indutny
+│  ├─ email: fedor@indutny.com
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/hash.js
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/hash.js/README.md
+├─ hmac-drbg@1.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/indutny/hmac-drbg
+│  ├─ publisher: Fedor Indutny
+│  ├─ email: fedor@indutny.com
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/hmac-drbg
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/hmac-drbg/README.md
+├─ inherits@2.0.1
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/inherits
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/inherits
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/inherits/LICENSE
+├─ inherits@2.0.3
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/inherits
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/hash.js/node_modules/inherits
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/hash.js/node_modules/inherits/LICENSE
+├─ lodash@4.17.11
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/lodash/lodash
+│  ├─ publisher: John-David Dalton
+│  ├─ email: john.david.dalton@gmail.com
+│  ├─ url: http://allyoucanleet.com/
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/lodash
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/lodash/LICENSE
+├─ minimalistic-assert@1.0.1
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/calvinmetcalf/minimalistic-assert
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/minimalistic-assert
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/minimalistic-assert/LICENSE
+├─ minimalistic-crypto-utils@1.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/indutny/minimalistic-crypto-utils
+│  ├─ publisher: Fedor Indutny
+│  ├─ email: fedor@indutny.com
+│  ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/minimalistic-crypto-utils
+│  └─ licenseFile: node_modules/bitcore-lib/node_modules/minimalistic-crypto-utils/README.md
+└─ safe-buffer@5.1.2
+   ├─ licenses: MIT
+   ├─ repository: https://github.com/feross/safe-buffer
+   ├─ publisher: Feross Aboukhadijeh
+   ├─ email: feross@feross.org
+   ├─ url: http://feross.org
+   ├─ path: /home/usr/Desktop/BlockUpload.io-master/bitcore/packages/bitcore-lib-cash/node_modules/bitcore-lib/node_modules/safe-buffer
+   └─ licenseFile: node_modules/bitcore-lib/node_modules/safe-buffer/LICENSE
