@@ -307,7 +307,7 @@ function buttonContinue() {
   //const incompleteUploadFile = localStorage.getItem("current_upload_file");
   // TODO: Ask for a refund address
   //}
-  // TODO: DEBUG/testnet
+  // TODO: DEBUG
   // const currentPrivateKey = bitcore.PrivateKey.fromWIF("");
 
   const currentPrivateKey = new bitcore.PrivateKey();
@@ -315,8 +315,7 @@ function buttonContinue() {
   //localStorage.setItem("current_upload_file", JSON.stringify(Array.from(final)));
   const currentPublicKey = currentPrivateKey.toPublicKey();
   // currentPublicKey.compressed() is true
-  // TODO: testnet
-  const paymentAddress = currentPublicKey.toAddress(bitcore.Networks.testnet).toString();
+  const paymentAddress = currentPublicKey.toAddress(bitcore.Networks.mainnet).toString();
   qrcode.makeCode(paymentAddress.toUpperCase());
   document.getElementById("qrcode").childNodes[1].style.setProperty("margin-right", "auto");
   document.getElementById("qrcode").childNodes[1].style.setProperty("margin-left", "auto");
@@ -336,7 +335,6 @@ function buttonContinue() {
   for (i = 0; i < paddedLen; i++) {
     obfuscatedFinal[i] ^= 0x6D;
   }
-  // BlockChair doesn't have testnet, link doesn't work if testnet
   document.getElementById("payment-address").innerHTML = "<a href=https://blockchair.com/bitcoin-cash/address/" +
     paymentAddress + ">" + paymentAddress +
     "</a><br><sup>Click the QR code to open the address in your wallet.</sup><br style='line-height: 0.01rem;'/><sup><code style='font-size: 1.8em;'>" +
@@ -348,8 +346,7 @@ function buttonContinue() {
 function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOfOuts) {
   // TODO: test for network connection.
   return function() {
-    // TODO: Testnet
-    const addressBitcore = bitcore.Address.fromString(address, bitcore.Networks.testnet);
+    const addressBitcore = bitcore.Address.fromString(address, bitcore.Networks.mainnet);
     const amountNum = parseFloat(amount);
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
@@ -364,8 +361,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
         console.log(utxo);
         const numberOfUTXO = utxo.length;
         if (numberOfUTXO === 0) {
-          // TODO: testnet
-          setError("Have you sent " + amount + " tBCH to the address above? If yes, press the button once again (optionally wait a few minutes).");
+          setError("Have you sent " + amount + " BCH to the address above? If yes, press the button once again (optionally wait a few minutes).");
           return;
         }
         var totalAmount = 0.0;
@@ -373,8 +369,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
           totalAmount += utxo[i]["amount"];
         }
         if (totalAmount < amountNum) {
-          // TODO: testnet
-          setError("Address balance lower than required. Please send " + (amountNum - totalAmount + 0.01).toFixed(2) + " tBCH more.");
+          setError("Address balance lower than required. Please send " + (amountNum - totalAmount + 0.01).toFixed(2) + " BCH more.");
           return;
         }
         clearError();
@@ -525,8 +520,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
           return;
         }
         document.getElementById("change-box").style.display = "block";
-        // TODO: Testnet
-        document.getElementById("change-amount").innerText = "Change Amount: " + (tx.change(bitcore.Address.fromString(address)).getChangeOutput().satoshis * 1e-8).toFixed(8) + " tBCH";
+        document.getElementById("change-amount").innerText = "Change Amount: " + (tx.change(bitcore.Address.fromString(address)).getChangeOutput().satoshis * 1e-8).toFixed(8) + " BCH";
         document.getElementById("send-change").onclick = finalize(txArr, txArr.length, privateKey, tx);
         // https://bitcore.io/api/lib/transaction#Transaction+change
         // TODO: EatBCH donation
@@ -536,9 +530,8 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
     // Usual: bchtest:qpytyr39fsr80emqh2ukftkpdqvdddcnfg9s6wjtfa
     // Empty: bchtest:qprl8rp8ejrufwcy0asz7m4nnl50n9xsccc5pqfqt0
     // Invld: bchtest:qprl8rp8ejrufwcy0asz7m4nnl50n9xsccc5pqfqt2
-    // "https://tbch.blockdozer.com/insight-api/addrs/"
-    // TODO: Testnet
-    xhr.open('GET', "https://test-bch-insight.bitpay.com/api/addrs/" + address + "/utxo", true);
+    // "https://test-bch-insight.bitpay.com/api/addrs/"
+    xhr.open('GET', "https://bch.blockdozer.com/insight-api/addrs/" + address + "/utxo", true);
     //xhr.setRequestHeader("Accept", "text/plain");
     xhr.send(null);
   }
@@ -555,8 +548,7 @@ function finalize(txArr, txArrLen, privateKey, lastTx) {
         setError("Please enter your address.");
         return;
       }
-      // TODO: testnet
-      var outAddr = bitcore.Address.fromString(changeAddress, bitcore.Networks.testnet);
+      var outAddr = bitcore.Address.fromString(changeAddress, bitcore.Networks.mainnet);
     } catch (err) {
       setError("Invalid address!");
       return;
@@ -606,14 +598,14 @@ function finalize(txArr, txArrLen, privateKey, lastTx) {
           return;
         }
         // https://pool.viabtc.com/tools/BCH/broadcast/
-        xhr.open("POST", "https://test-bch-insight.bitpay.com/api/tx/send", true);
+        // https://bch.blockdozer.com/api/tx/send
+        xhr.open("POST", "https://bch.coin.space/api/tx/send", true);
         // xhr.open("POST", "https://tbch.blockdozer.com/api/tx/send", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send("{\"rawtx\":\"" + txArr[index].serialize() + "\"}");
       });
     }
-    // TODO: Testnet
-    xhr.open("POST", "https://tbch.blockdozer.com/api/tx/send", true);
+    xhr.open("POST", "https://bch.coin.space/api/tx/send", true);
     // xhr.open("POST", "https://test-bch-insight.bitpay.com/api/tx/send", true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send("{\"rawtx\":\"" + txArr[0].serialize() + "\"}");

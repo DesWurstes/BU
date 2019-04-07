@@ -249,7 +249,7 @@ async function queryForTX(txid) {
       }
     }
     //xhr.open("GET", "https://test-bch-insight.bitpay.com/api/tx/" + encodeURI(txid), true);
-    xhr.open("GET", "https://tbch.blockdozer.com/api/tx/" + encodeURI(txid), true);
+    xhr.open("GET", "https://bch.blockdozer.com/api/tx/" + encodeURI(txid), true);
     setProgressBar("20%");
     xhr.send(null);
   });
