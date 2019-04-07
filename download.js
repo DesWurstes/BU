@@ -11,14 +11,13 @@ window.onload = window.onhashchange = function() {
 
 const hex_alphabet = Uint8Array.from([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 10, 11, 12, 13, 14, 15]);
 
-// TODO: typed array
 function decodeHex(str) {
-  var out = [];
   const strLen = str.length;
+  var out = new Uint8Array(strLen / 2);
   for (var i = 0; i < strLen; i += 2) {
     // if str[i] > 102
     // return;
-    out.push(hex_alphabet[str.charCodeAt(i) - 48] * 16 + hex_alphabet[str.charCodeAt(i + 1) - 48]);
+    out[i / 2] = hex_alphabet[str.charCodeAt(i) - 48] * 16 + hex_alphabet[str.charCodeAt(i + 1) - 48];
   }
   return out;
 }
@@ -62,13 +61,12 @@ function setError(text) {
   document.getElementById("TXID").readOnly = false;
 }
 
-// TODO: Remove async and await
-async function getNextTx(tx) {
+function getNextTx(tx) {
   tx = tx["vout"];
   const voutLen = tx.length;
   var i = 0;
   while ((i < voutLen) && !tx[i++]["spentTxId"]) { }
-  return await queryForTX(tx[i - 1]["spentTxId"]);
+  return queryForTX(tx[i - 1]["spentTxId"]);
 }
 
 function deobfuscate(arr) {
@@ -81,8 +79,7 @@ function deobfuscate(arr) {
 
 async function getTX() {
   document.getElementById("download-details").style.display = "none";
-  const txid = document.getElementById("TXID").value;
-  // TODO: uppercase hex!
+  const txid = document.getElementById("TXID").value.toLowerCase();
   if ((txid.length != 64) || (isInvalidHex(txid))) {
     setError("Invalid TXID");
     return;
@@ -102,7 +99,6 @@ async function getTX() {
   var tx2 = await getNextTx(tx);
   data.push(...deobfuscate(getVinPushes(tx2)));
   data.push(...deobfuscate(getVoutPush(tx)));
-  // TODO: add blind headers
   if (data[0] != 0x24 || data[1] != 0x3f || data[2] != 0x6a || data[3] != 0x88) {
     setError("This is not a file transaction compatible with the tool");
     return;
@@ -111,10 +107,10 @@ async function getTX() {
   const shouldEncrypt = data[8] & 1;
   const shouldCompress = data[8] & 2;
   var i = 16
-  const expectedChecksum = new Uint8Array(data.slice(12, i));
+  const expectedChecksum = Uint8Array.from(data.slice(12, i));
   if (shouldEncrypt) {
     i = 32;
-    nonce = new Uint8Array(data.slice(16, i));
+    nonce = Uint8Array.from(data.slice(16, i));
   }
   // TODO: Handle long filenames in multiple txes
   // TODO: Handle empty name and empty description
@@ -170,7 +166,6 @@ async function getTX() {
     setError("Wrong checksum!");
     return;
   }
-  // TODO: get passwordBytes from the user
   if (shouldEncrypt) {
     const passwordBytes = ToUTF8(FromString(window.prompt("Please enter the password for this file")));
     if (!passwordBytes) {
@@ -207,7 +202,7 @@ async function getTX() {
       setError("Decompress error! Code: " + decompressOut);
       return;
     }
-    fileContents = new Uint8Array(Module.HEAPU8.subarray(c2Buf, c2Buf + fcLen));
+    fileContents = Uint8Array.from(Module.HEAPU8.subarray(c2Buf, c2Buf + fcLen));
     Module._free(buf);
   }
   i = 0;
