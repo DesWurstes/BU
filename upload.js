@@ -581,6 +581,7 @@ function finalize(txArr, txArrLen, privateKey, lastTx) {
         setStatus("Waiting for the next block. May took a few minutes.");
       } else {
         clearError();
+        // TODO: Keep the number of transactions that were pushed successfully
         if (this.status != 200) {
           setError("Pushtx error: " + index + " <br><samp><sup><sub>" + this.responseText + "<br>" + this.statusText + "</sub></sup></samp>");
           // xhr = undefined;

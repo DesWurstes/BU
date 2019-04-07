@@ -62,11 +62,12 @@ function setError(text) {
   document.getElementById("TXID").readOnly = false;
 }
 
+// TODO: Remove async and await
 async function getNextTx(tx) {
   tx = tx["vout"];
+  const voutLen = tx.length;
   var i = 0;
-  // Assumes there always are
-  while (!tx[i++]["spentTxId"]) { }
+  while ((i < voutLen) && !tx[i++]["spentTxId"]) { }
   return await queryForTX(tx[i - 1]["spentTxId"]);
 }
 
@@ -166,14 +167,14 @@ async function getTX() {
     || (calculatedChecksum[1] != expectedChecksum[1])
     || (calculatedChecksum[2] != expectedChecksum[2])
     || (calculatedChecksum[3] != expectedChecksum[3])) {
-    console.log("Wrong checksum!");
+    setError("Wrong checksum!");
     return;
   }
   // TODO: get passwordBytes from the user
   if (shouldEncrypt) {
     const passwordBytes = ToUTF8(FromString(window.prompt("Please enter the password for this file")));
     if (!passwordBytes) {
-      console.log("Needed password");
+      setError("Needed password");
       return;
     }
     const passwordBytesLen = passwordBytes.length;
@@ -187,7 +188,7 @@ async function getTX() {
     Module.HEAPU8.set(nonce, c2Buf);
     Module.HEAPU8.set(fileContents, c3Buf);
     if (Module._full_decrypt(buf, passwordBytesLen, c2Buf, c3Buf, fcLenMinusSixteen, c4Buf)) {
-      console.log("Wrong password!");
+      setError("Wrong password!");
       return;
     }
     fileContents.set(Module.HEAPU8.subarray(c4Buf, c4Buf + fcLenMinusSixteen));
@@ -203,7 +204,7 @@ async function getTX() {
     const decompressOut = Module._lzma_decompress(buf, fcLen - 4, c2Buf, uncompressedLen);
     fcLen = uncompressedLen;
     if (decompressOut != fcLen) {
-      console.log("Decompress error! Code: " + decompressOut);
+      setError("Decompress error! Code: " + decompressOut);
       return;
     }
     fileContents = new Uint8Array(Module.HEAPU8.subarray(c2Buf, c2Buf + fcLen));
@@ -222,12 +223,12 @@ async function getTX() {
   fileContents = fileContents.subarray(i);
   document.getElementById("fileName").innerText = document.getElementById("download-data-button").download = ToString(FromUTF8(name));
   document.getElementById("description").innerText = ToString(FromUTF8(description));
-  if (shouldEncrypt) {
+  /*if (shouldEncrypt) {
     document.getElementById("passwordDiv").style.display = "";
     // TODO: decrypt
   } else {
     document.getElementById("passwordDiv").style.display = "none";
-  }
+  }*/
   document.getElementById("download-data-button").href = URL.createObjectURL(new Blob([fileContents], { type: 'application/octet-stream' }));
 
   document.getElementById("download-details").style.display = "";
@@ -245,7 +246,11 @@ async function queryForTX(txid) {
           setError("Explorer error:<br><samp><sup><sub>" + this.responseText + "<br>" + this.statusText + "</sub></sup></samp>");
           reject();
         }
-        resolve(JSON.parse(this.responseText));
+        try {
+          resolve(JSON.parse(this.responseText));
+        } catch (err) {
+          setError("Not found!");
+        }
       }
     }
     //xhr.open("GET", "https://test-bch-insight.bitpay.com/api/tx/" + encodeURI(txid), true);
