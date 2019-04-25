@@ -331,15 +331,14 @@ function buttonContinue() {
   // TODO: Debug
   const paddedLen = final.length;
   const amount = ((paddedLen / 2 * (1e-7)) + 0.0002).toFixed(4).toString();
-  var obfuscatedFinal = final.slice(0);
   for (i = 0; i < paddedLen; i++) {
-    obfuscatedFinal[i] ^= 0x6D;
+    final[i] ^= 0x6D;
   }
   document.getElementById("payment-address").innerHTML = "<a href=https://blockchair.com/bitcoin-cash/address/" +
     paymentAddress + ">" + paymentAddress +
     "</a><br><sup>Click the QR code to open the address in your wallet.</sup><br style='line-height: 0.01rem;'/><sup><code style='font-size: 1.8em;'>" +
     amount + " tBCH</code></sup>";
-  document.getElementById("made-payment-button").onclick = paymentMade(currentPrivateKey, currentPublicKey, paymentAddress, amount, obfuscatedFinal, numberOfOuts);
+  document.getElementById("made-payment-button").onclick = paymentMade(currentPrivateKey, currentPublicKey, paymentAddress, amount, final, numberOfOuts);
 }
 
 // TODO: get rid of lambdas

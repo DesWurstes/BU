@@ -5,7 +5,7 @@ if (!(ua.includes("bot") || ua.includes("bing") || ua.includes("duck") || ua.inc
 
 window.onload = window.onhashchange = function() {
   if (window.location.hash.length >= 70) {
-    document.getElementById('TXID').value = window.location.hash.slice(6, 70);
+    document.getElementById('TXID').value = window.location.hash.substring(6, 70);
   }
 }
 
@@ -307,5 +307,5 @@ function getVoutPush(tx) {
   if (!tx2) {
     return [];
   }
-  return decodeHex(tx2.slice(10));
+  return decodeHex(tx2.substring(10));
 }
