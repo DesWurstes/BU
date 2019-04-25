@@ -216,8 +216,11 @@ async function getTX() {
     i++;
   }
   fileContents = fileContents.subarray(i);
+  var date = new Date(tx.time * 1000).toString();
+  date = date.substring(0, date.lastIndexOf(":"));
   document.getElementById("fileName").innerText = document.getElementById("download-data-button").download = ToString(FromUTF8(name));
   document.getElementById("description").innerText = ToString(FromUTF8(description));
+  document.getElementById("date").innerText = date;
   /*if (shouldEncrypt) {
     document.getElementById("passwordDiv").style.display = "";
     // TODO: decrypt
