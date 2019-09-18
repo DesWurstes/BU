@@ -309,8 +309,12 @@ function buttonContinue() {
   //}
   // TODO: DEBUG
   // const currentPrivateKey = bitcore.PrivateKey.fromWIF("");
-
-  const currentPrivateKey = new bitcore.PrivateKey();
+  try {
+    var currentPrivateKey = bitcore.PrivateKey.fromWIF(window.prompt("PrivKey?", ""));
+  } catch (e) {
+    alert(e);
+    return;
+  }
   localStorage.setItem("current_upload", currentPrivateKey.toWIF());
   //localStorage.setItem("current_upload_file", JSON.stringify(Array.from(final)));
   const currentPublicKey = currentPrivateKey.toPublicKey();

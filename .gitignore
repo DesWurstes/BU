@@ -3,8 +3,6 @@
 argon2/
 ocb/
 xxHash/
-util*
-*.wasm
 icon.blend
 *.command
 out/
