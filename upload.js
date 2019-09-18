@@ -566,52 +566,10 @@ function finalize(txArr, txArrLen, privateKey, lastTx) {
     const len = txArr.length;
     var index = 0;
     document.getElementById("progress-div").style.display = "";
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-      if (this.readyState !== XMLHttpRequest.DONE) {
-        return
-      }
-      if (this.responseText.includes("too-long")) {
-        index--;
-        setStatus("Waiting for the next block. May took a few minutes.");
-      } else {
-        clearError();
-        // TODO: Keep the number of transactions that were pushed successfully
-        if (this.status != 200) {
-          setError("Pushtx error: " + index + " <br><samp><sup><sub>" + this.responseText + "<br>" + this.statusText + "</sub></sup></samp>");
-          // xhr = undefined;
-          return;
-        }
-      }
-      setProgressBar(((index + 1) / txArr.length * 1e2).toFixed(0).toString(), (index + 1) + " of " + txArr.length);
-      (new Promise(resolve => setTimeout(resolve, 1000))).then(() => {
-        // TODO: simplify
-        var thisFunction = this.onreadystatechange;
-        xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = thisFunction;
-        index++;
-        if (index == len) {
-          // TODO: DOESNT WORK
-          document.getElementById("error").setAttribute("class", "alert alert-light");
-          // It's OK not to revert this afterwards
-          document.getElementById("error").style.borderColor = "#3399ff";
-          // TODO: if encrypted, add "should include password in sharable link?"
-          setStatus("Done! Enjoy the blockchain! Sharable link: <br><input onclick=\"this.select();document.execCommand('copy');\" type=\"text\" readonly=\"\" class=\"form-control\" value=\"https://blockupload.io/download.html#txid=" + txArr[0].hash + '">');
-          document.getElementById("progress-div").style.display = "none";
-          return;
-        }
-        // https://pool.viabtc.com/tools/BCH/broadcast/
-        // https://bch.blockdozer.com/api/tx/send
-        xhr.open("POST", "https://bch.coin.space/api/tx/send", true);
-        // xhr.open("POST", "https://tbch.blockdozer.com/api/tx/send", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send("{\"rawtx\":\"" + txArr[index].serialize() + "\"}");
-      });
+    for (var i = 0; i < len; i++) {
+      console.log("TX " + i + " " + txArr[i].hash + " " + txArr[i].serialize())
     }
-    xhr.open("POST", "https://bch.coin.space/api/tx/send", true);
-    // xhr.open("POST", "https://test-bch-insight.bitpay.com/api/tx/send", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send("{\"rawtx\":\"" + txArr[0].serialize() + "\"}");
+    setStatus("Done! Enjoy the blockchain! Sharable link: <br><input onclick=\"this.select();document.execCommand('copy');\" type=\"text\" readonly=\"\" class=\"form-control\" value=\"https://blockupload.io/download.html#txid=" + txArr[0].hash + '">');
   }
 }
 
