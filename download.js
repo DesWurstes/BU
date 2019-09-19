@@ -66,7 +66,11 @@ function getNextTx(tx) {
   const voutLen = tx.length;
   var i = 0;
   while ((i < voutLen) && !tx[i++]["spentTxId"]) { }
-  return queryForTX(tx[i - 1]["spentTxId"]);
+  tx = tx[i - 1]["spentTxId"];
+  if (tx) {
+    return queryForTX(tx);
+  }
+  return new Promise(function(resolve, _reject) { resolve(0) });
 }
 
 function deobfuscate(arr) {
@@ -89,6 +93,7 @@ async function getTX() {
   document.getElementById("TXID").readOnly = true;
   document.getElementById("download-button").disabled = true;
   var tx = await queryForTX(txid);
+  var time = tx["time"];
   var outs = tx["vout"];
   if (outs.length < 2) {
     setError("Weird transaction!");
@@ -132,7 +137,6 @@ async function getTX() {
     return;
   }
   console.log("Intra-compressed length: " + i);
-  tx = await getNextTx(tx2);
   var fileContents = new Uint8Array(fcLen);
   var current_push = data.slice(i);
   const first_pushlen = current_push.length;
@@ -142,6 +146,7 @@ async function getTX() {
   } else {
     fileContents.set(current_push);
     i = first_pushlen;
+    tx = await getNextTx(tx2);
     try {
       while (i < fcLen) {
         current_push = deobfuscate(getVinPushes(tx));
@@ -216,7 +221,7 @@ async function getTX() {
     i++;
   }
   fileContents = fileContents.subarray(i);
-  var date = new Date(tx.time * 1000).toString();
+  var date = new Date(time * 1000).toString();
   date = date.substring(0, date.lastIndexOf(":"));
   document.getElementById("fileName").innerText = document.getElementById("download-data-button").download = ToString(FromUTF8(name));
   document.getElementById("description").innerText = ToString(FromUTF8(description));
@@ -233,6 +238,7 @@ async function getTX() {
   document.getElementById("download-button").disabled = false;
   //document.getElementById("errorBox").innerText = "";
   document.getElementById("TXID").readOnly = false;
+  setProgressBar("100%");
 }
 
 async function queryForTX(txid) {
@@ -247,6 +253,7 @@ async function queryForTX(txid) {
         try {
           resolve(JSON.parse(this.responseText));
         } catch (err) {
+          console.log(err);
           setError("Not found!");
         }
       }
@@ -277,6 +284,9 @@ function decodeP2SHPush(str) {
 }
 
 function getVinPushes(tx) {
+  if (!tx) {
+    return [];
+  }
   tx = tx["vin"];
   const len = tx.length;
   var arr = [];
