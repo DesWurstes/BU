@@ -173,7 +173,6 @@ function buttonContinue() {
   var shouldCompress = fileContents.length > 128, nonce;
   // TODO: DEBUG
   //shouldCompress = false;
-  console.log("Disabled compression.");
   if (shouldCompress) {
     setStatus("Compression in progress...");
     const fcLen = fileContents.length;
@@ -312,10 +311,12 @@ function buttonContinue() {
 
   const currentPrivateKey = new bitcore.PrivateKey();
   localStorage.setItem("current_upload", currentPrivateKey.toWIF());
+  console.log("Private key: " + currentPrivateKey.toWIF());
   //localStorage.setItem("current_upload_file", JSON.stringify(Array.from(final)));
   const currentPublicKey = currentPrivateKey.toPublicKey();
   // currentPublicKey.compressed() is true
   const paymentAddress = currentPublicKey.toAddress(bitcore.Networks.mainnet).toString();
+  console.log("Payment address: " + paymentAddress);
   qrcode.makeCode(paymentAddress.toUpperCase());
   document.getElementById("qrcode").childNodes[1].style.setProperty("margin-right", "auto");
   document.getElementById("qrcode").childNodes[1].style.setProperty("margin-left", "auto");
