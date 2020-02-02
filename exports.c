@@ -64,13 +64,12 @@ static void encrypt_checksum(const unsigned char * __restrict data, unsigned cha
 // Assumes the users have non-sidechanneled computers
 
 // outlen = datalen + 16
-MINOR_EXPORT int ocb_chacha_encrypt(const unsigned char key[__restrict 32], const unsigned char nonce[__restrict 12], const unsigned char * __restrict data, int datalen, unsigned char * __restrict out) {
-  unsigned char iv2[32], key2[32], tmp[datalen + 16];
+MINOR_EXPORT int ocb_chacha_encrypt(const unsigned char key[__restrict 32], const unsigned char nonce[__restrict 36], const unsigned char * __restrict data, int datalen, unsigned char * __restrict out) {
+  unsigned char key2[32], tmp[datalen + 16];
   int err = 0;
-  encrypt_checksum(nonce, iv2);
-  err |= argon2id_hash_raw(5, 1 << 16, 1, key, 32, iv2, 32, key2, 32);
-  ocb_encrypt(key2, iv2, data, datalen, tmp);
-  chacha20_toggle_encryption(key, nonce, tmp, out, datalen + 16);
+  ocb_encrypt(key, nonce, data, datalen, tmp);
+  err |= argon2id_hash_raw(5, 1 << 19, 1, key, 32, &nonce[12], 16, key2, 32);
+  chacha20_toggle_encryption(key2, &nonce[28], tmp, out, datalen + 16);
   return err;
 }
 
@@ -198,16 +197,17 @@ WASM_EXPORT int lzma_compress(const unsigned char *data, unsigned int datalen, u
 // Argon2 and scrypt use 512 MB of RAM
 
 // Keep in mind: a nonce can't be used more than once with the same key.
-WASM_EXPORT int full_encrypt(const unsigned char *__restrict key, int keylen, const unsigned char nonce[__restrict 16], const unsigned char * __restrict data, int datalen, unsigned char * __restrict out) {
+WASM_EXPORT int full_encrypt(const unsigned char *__restrict key, int keylen, const unsigned char nonce[__restrict 68], const unsigned char * __restrict data, int datalen, unsigned char * __restrict out) {
   unsigned char hardened_key[32], final_key[32];
   int err = 0;
   err |= crypto_scrypt(key, keylen, nonce, 16, 1 << 18, 16, 1, hardened_key, 32);
   LOG("Argon start...\n");
-  err |= argon2id_hash_raw(5, 1 << 19, 1, hardened_key, 32, nonce, 16, final_key, 32);
+  err |= argon2id_hash_raw(5, 1 << 18, 1, hardened_key, 32, &nonce[16], 16, final_key, 32);
   LOG("Argon end...\n");
-  return err | ocb_chacha_encrypt(final_key, nonce, data, datalen, out);
+  return err | ocb_chacha_encrypt(final_key, &nonce[32], data, datalen, out);
 }
 
+// Backwards compatibility, encrypting code removed
 WASM_EXPORT int full_decrypt(const unsigned char *__restrict key, int keylen, const unsigned char nonce[__restrict 16], const unsigned char * __restrict data, int datalen, unsigned char * __restrict out) {
   unsigned char hardened_key[32], final_key[32];
   int err = 0;
