@@ -88,7 +88,7 @@ MINOR_EXPORT int ocb_chacha_decrypt_v2(const unsigned char key[__restrict 32], c
   unsigned char key2[32], tmp[cipherlen + 16];
   int err = 0;
   err |= argon2id_hash_raw(5, 1 << 19, 1, key, 32, &nonce[12], 16, key2, 32);
-  chacha20_toggle_encryption(key2, nonce, cipher, tmp, cipherlen + 16);
+  chacha20_toggle_encryption(key2, &nonce[28], cipher, tmp, cipherlen + 16);
   return err | ocb_decrypt(key, nonce, tmp, cipherlen, out);
 }
 
@@ -247,7 +247,12 @@ int main(void) {
     194,55,4,7,3,5,7,2,99,57,44,194,55,4,7,3,5,7,2,
     99,57,44,194,55,4,7,3,5,7,2
   };
-  const unsigned char nonce[68] = {7,8,4,170,2,8};
+  const unsigned char nonce[68] = {
+    92,96,16,17,88,21,53,74,80,56,39,19,58,60,
+    31,40,76,79,4,73,66,68,13,82,30,70,57,42,
+    90,23,37,35,18,78,69,3,22,24,20,62,67,48,
+    14,65,84,2,86,61,52,28,15,8,99,12,25,91,89,
+    1,85,77,100,71,6,87,27,98,43,59};
   unsigned char out[72 + 16];
   unsigned char final[72] = {0};
   if (full_encrypt(key, 6, nonce, data, 72, out) | full_decrypt_v2(key, 6, nonce, out, 72, final))
