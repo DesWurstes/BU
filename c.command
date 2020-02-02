@@ -1,5 +1,5 @@
 cd "$(dirname "$0")"
-gcc-8 \
+"${CC}" \
 exports.c \
 -Iargon2/include \
 -o test.out \
