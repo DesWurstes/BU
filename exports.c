@@ -83,6 +83,15 @@ MINOR_EXPORT int ocb_chacha_decrypt(const unsigned char key[__restrict 32], cons
   return err | ocb_decrypt(key2, iv2, tmp, cipherlen, out);
 }
 
+// cipherlen doesn't include the +16 bytes
+MINOR_EXPORT int ocb_chacha_decrypt_v2(const unsigned char key[__restrict 32], const unsigned char nonce[__restrict 36], const unsigned char * __restrict cipher, int cipherlen, unsigned char * __restrict out) {
+  unsigned char key2[32], tmp[cipherlen + 16];
+  int err = 0;
+  err |= argon2id_hash_raw(5, 1 << 19, 1, key, 32, &nonce[12], 16, key2, 32);
+  chacha20_toggle_encryption(key2, nonce, cipher, tmp, cipherlen + 16);
+  return err | ocb_decrypt(key, nonce, tmp, cipherlen, out);
+}
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -218,6 +227,16 @@ WASM_EXPORT int full_decrypt(const unsigned char *__restrict key, int keylen, co
   return err | ocb_chacha_decrypt(final_key, nonce, data, datalen, out);
 }
 
+WASM_EXPORT int full_decrypt_v2(const unsigned char *__restrict key, int keylen, const unsigned char nonce[__restrict 68], const unsigned char * __restrict data, int datalen, unsigned char * __restrict out) {
+  unsigned char hardened_key[32], final_key[32];
+  int err = 0;
+  err |= crypto_scrypt(key, keylen, nonce, 16, 1 << 18, 16, 1, hardened_key, 32);
+  LOG("Argon start...\n");
+  err |= argon2id_hash_raw(5, 1 << 18, 1, hardened_key, 32, &nonce[16], 16, final_key, 32);
+  LOG("Argon end...\n");
+  return err | ocb_chacha_decrypt_v2(final_key, &nonce[32], data, datalen, out);
+}
+
 #ifdef NO_WASM
 #include <stdio.h>
 int main(void) {
@@ -228,10 +247,10 @@ int main(void) {
     194,55,4,7,3,5,7,2,99,57,44,194,55,4,7,3,5,7,2,
     99,57,44,194,55,4,7,3,5,7,2
   };
-  const unsigned char nonce[32] = {7,8,4,170,2,8};
+  const unsigned char nonce[68] = {7,8,4,170,2,8};
   unsigned char out[72 + 16];
   unsigned char final[72] = {0};
-  if (full_encrypt(key, 6, nonce, data, 72, out) | full_decrypt(key, 6, nonce, out, 72, final))
+  if (full_encrypt(key, 6, nonce, data, 72, out) | full_decrypt_v2(key, 6, nonce, out, 72, final))
     return 0;
   for (int i = 0; i < 72; i++)
     printf("%u, ", final[i]);
