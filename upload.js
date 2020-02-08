@@ -338,7 +338,7 @@ function buttonContinue() {
   document.getElementById("payment-address").innerHTML = "<a href=https://blockchair.com/bitcoin-cash/address/" +
     paymentAddress + ">" + paymentAddress +
     "</a><br><sup>Click the QR code to open the address in your wallet.</sup><br style='line-height: 0.01rem;'/><sup><code style='font-size: 1.8em;'>" +
-    amount + " tBCH</code></sup>";
+    amount + " BCH</code></sup>";
   document.getElementById("made-payment-button").onclick = paymentMade(currentPrivateKey, currentPublicKey, paymentAddress, amount, final, numberOfOuts);
 }
 
