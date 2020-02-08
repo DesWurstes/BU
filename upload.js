@@ -520,7 +520,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
           return;
         }
         document.getElementById("change-box").style.display = "block";
-        document.getElementById("change-amount").innerText = "Change Amount: " + (tx.change(bitcore.Address.fromString(address)).getChangeOutput().satoshis * 1e-8).toFixed(8) + " BCH";
+        document.getElementById("change-amount").innerText = "Change Amount: " + (tx.change(addressBitcore).getChangeOutput().satoshis * 1e-8).toFixed(8) + " BCH";
         document.getElementById("send-change").onclick = finalize(txArr, txArr.length, privateKey, tx);
         // https://bitcore.io/api/lib/transaction#Transaction+change
         // TODO: EatBCH donation
@@ -531,7 +531,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
     // Empty: bchtest:qprl8rp8ejrufwcy0asz7m4nnl50n9xsccc5pqfqt0
     // Invld: bchtest:qprl8rp8ejrufwcy0asz7m4nnl50n9xsccc5pqfqt2
     // "https://test-bch-insight.bitpay.com/api/addrs/"
-    xhr.open('GET', "https://bch.blockdozer.com/insight-api/addrs/" + address + "/utxo", true);
+    xhr.open('GET', "https://bch.coin.space/api/addrs/" + addressBitcore.toLegacyAddress() + "/utxo", true);
     //xhr.setRequestHeader("Accept", "text/plain");
     xhr.send(null);
   }
