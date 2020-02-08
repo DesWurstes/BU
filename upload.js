@@ -193,9 +193,7 @@ function buttonContinue() {
     }
     Module._free(buf);
   }
-  clearError();
   if (shouldEncrypt) {
-    console.log("Started encrypt");
     const fcLen = fileContents.length;
     const fcLenPlusSixteen = fcLen + 16;
     // key-nonce-fileContents-output
@@ -208,10 +206,14 @@ function buttonContinue() {
     Module.HEAPU8.set(passwordBytes, buf);
     Module.HEAPU8.set(nonce, c2Buf);
     Module.HEAPU8.set(fileContents, c3Buf);
-    Module._full_encrypt(buf, passwordBytesLen, c2Buf, c3Buf, fcLen, c4Buf);
+    if (Module._full_encrypt(buf, passwordBytesLen, c2Buf, c3Buf, fcLen, c4Buf)) {
+      setError("Encryption failed!");
+      return;
+    }
     fileContents = new Uint8Array(Module.HEAPU8.subarray(c4Buf, c4Buf + fcLenPlusSixteen));
     Module._free(buf);
   }
+  clearError();
   const fcLen = fileContents.length;
   const fLen = 4 + 4 + 4 + 4 + (shouldEncrypt ? 16 : 0) + (fileNameInside ? 0 : fileName.length) + 1 + 1 + fcLen;
   var final = new Uint8Array(fLen);
@@ -657,6 +659,7 @@ function setProgressBar(percent, desc) {
 function setStatus(str) {
   document.getElementById("error").innerHTML = str;
   document.getElementById("error").style.display = "block";
+  console.log(">>> " + str)
 }
 
 function clearEverything() {
