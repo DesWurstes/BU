@@ -111,10 +111,13 @@ async function getTX() {
   var fcLen = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7];
   const shouldEncrypt = data[8] & 1;
   const shouldCompress = data[8] & 2;
+  const shouldUseNewEncryption = data[8] & 4;
+  // Change indices depending on encryption
+  const nonceLengthDifference = 13 * shouldUseNewEncryption;
   var i = 16
   const expectedChecksum = Uint8Array.from(data.slice(12, i));
   if (shouldEncrypt) {
-    i = 32;
+    i = 32 + nonceLengthDifference;
     nonce = Uint8Array.from(data.slice(16, i));
   }
   // TODO: Handle long filenames in multiple txes
@@ -180,21 +183,22 @@ async function getTX() {
     const passwordBytesLen = passwordBytes.length;
     const fcLenMinusSixteen = fcLen - 16;
     // key-nonce-encrypted-output
-    const buf = Module._malloc(passwordBytesLen + 2 * fcLen);
+    const buf = Module._malloc(passwordBytesLen + nonceLengthDifference + 2 * fcLen);
     const c2Buf = buf + passwordBytesLen;
-    const c3Buf = c2Buf + 16;
+    const c3Buf = c2Buf + 16 + nonceLengthDifference;
     const c4Buf = c3Buf + fcLen;
     Module.HEAPU8.set(passwordBytes, buf);
     Module.HEAPU8.set(nonce, c2Buf);
     Module.HEAPU8.set(fileContents, c3Buf);
-    if (Module._full_decrypt(buf, passwordBytesLen, c2Buf, c3Buf, fcLenMinusSixteen, c4Buf)) {
+    const decryptor = shouldUseNewEncryption ? Module._full_decrypt_v2 : Module._full_decrypt;
+    if (decryptor(buf, passwordBytesLen, c2Buf, c3Buf, fcLenMinusSixteen, c4Buf)) {
       setError("Wrong password!");
       return;
     }
-    fileContents.set(Module.HEAPU8.subarray(c4Buf, c4Buf + fcLenMinusSixteen));
+    fcLen -= 16;
+    fileContents.set(Module.HEAPU8.subarray(c4Buf, c4Buf + fcLen));
     fileContents = fileContents.subarray(0, -16);
     Module._free(buf);
-    fcLen -= 16;
   }
   if (shouldCompress) {
     const uncompressedLen = fileContents[0] | (fileContents[1] << 8) | (fileContents[2] << 16) | (fileContents[3] << 24);

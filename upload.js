@@ -18,11 +18,13 @@
 var decompress = Module.cwrap("lzma_decompress", "number", ["number", "number", "number", "number"]);
 // int lzma_compress(const unsigned char *data, unsigned int datalen, unsigned char * out);
 var compress = Module.cwrap("lzma_compress", "number", ["number", "number", "number"]);
-// void full_encrypt(const unsigned char * key, int keylen, const unsigned char nonce[16], const unsigned char * data, int datalen, unsigned char * out);
+// void full_encrypt(const unsigned char * key, int keylen, const unsigned char nonce[68], const unsigned char * data, int datalen, unsigned char * out);
 var encrypt = Module.cwrap("full_encrypt", null, ["number", "number", "number", "number", "number", "number"]);
 // int full_decrypt(const unsigned char * key, int keylen, const unsigned char nonce[16], const unsigned char * data, int datalen, unsigned char * out);
 var decrypt = Module.cwrap("full_decrypt", "number", ["number", "number", "number", "number", "number", "number"]);
-// void checksum(const unsigned char * __restrict data, int datalen, unsigned char out[__restrict 8])
+// int full_decrypt_v2(const unsigned char * key, int keylen, const unsigned char nonce[68], const unsigned char * data, int datalen, unsigned char * out);
+var decrypt_v2 = Module.cwrap("full_decrypt", "number", ["number", "number", "number", "number", "number", "number"]);
+// void checksum(const unsigned char * data, int datalen, unsigned char out[8])
 var generate_checksum = Module.cwrap("checksum", null, ["number", "number", "number"]);
 */
 
@@ -197,11 +199,11 @@ function buttonContinue() {
     const fcLen = fileContents.length;
     const fcLenPlusSixteen = fcLen + 16;
     // key-nonce-fileContents-output
-    const buf = Module._malloc(passwordBytesLen + 2 * fcLenPlusSixteen);
+    const buf = Module._malloc(passwordBytesLen + 52 + 2 * fcLenPlusSixteen);
     const c2Buf = buf + passwordBytesLen;
-    const c3Buf = c2Buf + 16;
+    const c3Buf = c2Buf + 68;
     const c4Buf = c3Buf + fcLen;
-    nonce = new Uint8Array(16);
+    nonce = new Uint8Array(68);
     window.crypto.getRandomValues(nonce);
     Module.HEAPU8.set(passwordBytes, buf);
     Module.HEAPU8.set(nonce, c2Buf);
@@ -226,7 +228,7 @@ function buttonContinue() {
   final[6] = (fcLen >>> 8) & 255;
   final[7] = fcLen & 255;
   if (shouldEncrypt) {
-    final[8] = 1;
+    final[8] = 5;
   }
   if (shouldCompress) {
     final[8] |= 2;
