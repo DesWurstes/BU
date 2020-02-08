@@ -43,6 +43,9 @@ var pkhash = require(192).PublicKeyHash;
 // If an error happens, replace bueffer.Buffer.from(x)
 // with bueffer.buffer.from(encodeHex(x), "hex")
 var bueffer = require(52);
+// Find var Base58Check = function Base58Check
+var base58Check = require(176);
+
 // TODO: move to button continue
 var fileName = "";
 var fileBackup, fileContents;
@@ -348,6 +351,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
   return function() {
     const addressBitcore = bitcore.Address.fromString(address, bitcore.Networks.mainnet);
     const amountNum = parseFloat(amount);
+    const legacyAddr = base58Check.encode(bueffer.Buffer.from([0].concat(Array.from(addressBitcore.hashBuffer))));
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
       if (this.readyState == XMLHttpRequest.DONE) {
@@ -531,7 +535,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
     // Empty: bchtest:qprl8rp8ejrufwcy0asz7m4nnl50n9xsccc5pqfqt0
     // Invld: bchtest:qprl8rp8ejrufwcy0asz7m4nnl50n9xsccc5pqfqt2
     // "https://test-bch-insight.bitpay.com/api/addrs/"
-    xhr.open('GET', "https://bch.coin.space/api/addrs/" + addressBitcore.toLegacyAddress() + "/utxo", true);
+    xhr.open('GET', "https://bch.coin.space/api/addrs/" + legacyAddr + "/utxo", true);
     //xhr.setRequestHeader("Accept", "text/plain");
     xhr.send(null);
   }
