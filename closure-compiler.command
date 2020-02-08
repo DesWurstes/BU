@@ -18,10 +18,12 @@ sed -i . '/bitcore-lib-full.js/d' ./upload.html
 sed -i . '/utf.min.js/d' ./download.html
 sed -i . '/util.js/d' ./download.html
 HTMLFLAGS="--remove-comments --minify-css true --collapse-inline-tag-whitespace --collapse-whitespace"
-html-minifier -o download.html download.html $HTMLFLAGS
-html-minifier -o examples.html examples.html $HTMLFLAGS
-html-minifier -o faq.html faq.html $HTMLFLAGS
-html-minifier -o index.html index.html $HTMLFLAGS
-html-minifier -o opensource.html opensource.html $HTMLFLAGS
-html-minifier -o terms_of_use.html terms_of_use.html $HTMLFLAGS
-html-minifier -o upload.html upload.html $HTMLFLAGS
+# Remove "=" for bash
+html-minifier -o download.html download.html ${=HTMLFLAGS}
+html-minifier -o examples.html examples.html ${=HTMLFLAGS}
+html-minifier -o faq.html faq.html ${=HTMLFLAGS}
+html-minifier -o index.html index.html ${=HTMLFLAGS}
+html-minifier -o opensource.html opensource.html ${=HTMLFLAGS}
+html-minifier -o terms_of_use.html terms_of_use.html ${=HTMLFLAGS}
+html-minifier -o upload.html upload.html ${=HTMLFLAGS}
+# Then manually fix base href
