@@ -217,7 +217,7 @@ function buttonContinue() {
   }
   clearError();
   const fcLen = fileContents.length;
-  const fLen = 4 + 4 + 4 + 4 + (shouldEncrypt ? 16 : 0) + (fileNameInside ? 0 : fileName.length) + 1 + 1 + fcLen;
+  const fLen = 4 + 4 + 4 + 4 + (shouldEncrypt ? 68 : 0) + (fileNameInside ? 0 : fileName.length) + 1 + 1 + fcLen;
   var final = new Uint8Array(fLen);
   final[0] = 0x24;
   final[1] = 0x3f;
@@ -237,7 +237,7 @@ function buttonContinue() {
   i = 16;
   if (shouldEncrypt) {
     final.set(nonce, i);
-    i = 32;
+    i = 84;
   }
   if (!fileNameInside) {
     final.set(fileName, i);
