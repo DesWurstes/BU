@@ -15,8 +15,8 @@ function decodeHex(str) {
   const strLen = str.length;
   var out = new Uint8Array(strLen / 2);
   for (var i = 0; i < strLen; i += 2) {
-    // if str[i] > 102
-    // return;
+    //  if (str[i] > 102 || (hex_alphabet[str.charCodeAt(i) - 48] == -1) || (hex_alphabet[str.charCodeAt(i + 1) - 48] == -1))
+    //    console.log("Impossible hex")
     out[i / 2] = hex_alphabet[str.charCodeAt(i) - 48] * 16 + hex_alphabet[str.charCodeAt(i + 1) - 48];
   }
   return out;
@@ -263,7 +263,7 @@ async function queryForTX(txid) {
       }
     }
     //xhr.open("GET", "https://test-bch-insight.bitpay.com/api/tx/" + encodeURI(txid), true);
-    xhr.open("GET", "https://bch.coin.space/api/tx/" + encodeURI(txid), true);
+    xhr.open("GET", "https://explorer.api.bitcoin.com/bch/v1/tx/" + encodeURI(txid), true);
     setProgressBar("20%");
     xhr.send(null);
   });
@@ -303,7 +303,7 @@ function getVinPushes(tx) {
       return [];
     }
     // Assume last 36 bytes: Push + 33 + numberOfPkeys + CHECKMULTISIG
-    arr.push(...decodeP2SHPush(decodeHex(tx2.slice(tx2.indexOf("[ALL|FORKID] 51") + 15, -72))));
+    arr.push(...decodeP2SHPush(decodeHex(tx2.slice(tx2.lastIndexOf(" 51") + 3, -72))));
   }
   return arr;
 }
