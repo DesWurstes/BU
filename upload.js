@@ -343,7 +343,9 @@ function buttonContinue() {
     final[i] ^= 0x6D;
   }
   // Does not include anything else than what's public in the blockchain
-  localStorage.setItem("data_to_upload", encodeHex(final));
+  try {
+    localStorage.setItem("data_to_upload", encodeHex(final));
+  } catch (e) { }
   document.getElementById("payment-address").innerHTML = "<a href=https://blockchair.com/bitcoin-cash/address/" +
     paymentAddress + ">" + paymentAddress +
     "</a><br><sup>Click the QR code to open the address in your wallet.</sup><br style='line-height: 0.01rem;'/><sup><code style='font-size: 1.8em;'>" +
@@ -593,6 +595,7 @@ function finalize(txArr, txArrLen, privateKey, lastTx) {
           if (index == -1) index++
           console.log("Prev tx: " + txArr[index].serialize())
           console.log("Next tx: " + txArr[index + 2].serialize())
+          if (index == 0) index--
         }
       }
       setProgressBar(((index + 1) / txArr.length * 1e2).toFixed(0).toString(), (index + 1) + " of " + txArr.length);
