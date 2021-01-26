@@ -342,6 +342,8 @@ function buttonContinue() {
   for (i = 0; i < paddedLen; i++) {
     final[i] ^= 0x6D;
   }
+  // Does not include anything else than what's public in the blockchain
+  localStorage.setItem("data_to_upload", encodeHex(final));
   document.getElementById("payment-address").innerHTML = "<a href=https://blockchair.com/bitcoin-cash/address/" +
     paymentAddress + ">" + paymentAddress +
     "</a><br><sup>Click the QR code to open the address in your wallet.</sup><br style='line-height: 0.01rem;'/><sup><code style='font-size: 1.8em;'>" +
@@ -349,7 +351,6 @@ function buttonContinue() {
   document.getElementById("made-payment-button").onclick = paymentMade(currentPrivateKey, currentPublicKey, paymentAddress, amount, final, numberOfOuts);
 }
 
-// TODO: get rid of lambdas
 function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOfOuts) {
   // TODO: test for network connection.
   return function() {
@@ -382,6 +383,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
         }
         clearError();
         localStorage.setItem("first_utxo", JSON.stringify(utxo));
+        localStorage.setItem("current_started_upload", privateKey.toWIF());
         var txArr = [], fileIndex = 0, tx = new bitcore.Transaction().feePerKb(1500);
         // Sometimes the API can't calculate scriptPubKey. Here's the alternative calculation:
         // const scriptPubKey =  utxo[0]["scriptPubKey"];
@@ -481,7 +483,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
           console.log(tx.serialize());
           const txHash = tx.hash;
           //console.log(txHash);
-          let tx2 = new bitcore.Transaction().feePerKb(2500);
+          let tx2 = new bitcore.Transaction().feePerKb(1500);
           //if (tx._changeIndex != -2) {
           if (outsInThisTX === 0) {
             tx2 = tx2.from({
@@ -578,14 +580,19 @@ function finalize(txArr, txArrLen, privateKey, lastTx) {
       }
       if (this.responseText.includes("too-long")) {
         index--;
-        setStatus("Waiting for the next block. May took a few minutes.");
+        setStatus("Waiting for the next block. May take a few minutes.");
       } else {
         clearError();
         // TODO: Keep the number of transactions that were pushed successfully
         if (this.status != 200) {
-          setError("Pushtx error: " + index + " <br><samp><sup><sub>" + this.responseText + "<br>" + this.statusText + "</sub></sup></samp>");
+          setError("Pushtx error (still trying): " + index + " <br><samp><sup><sub>" + this.responseText + "<br>" + this.statusText + "</sub></sup></samp>");
           // xhr = undefined;
-          return;
+          // Keep trying
+          console.log("Problematic tx: " + txArr[index].serialize())
+          index--;
+          if (index == -1) index++
+          console.log("Prev tx: " + txArr[index].serialize())
+          console.log("Next tx: " + txArr[index + 2].serialize())
         }
       }
       setProgressBar(((index + 1) / txArr.length * 1e2).toFixed(0).toString(), (index + 1) + " of " + txArr.length);
@@ -603,6 +610,7 @@ function finalize(txArr, txArrLen, privateKey, lastTx) {
           // TODO: if encrypted, add "should include password in sharable link?"
           setStatus("Done! Enjoy the blockchain! Sharable link: <br><input onclick=\"this.select();document.execCommand('copy');\" type=\"text\" readonly=\"\" class=\"form-control\" value=\"https://blockupload.io/download.html#txid=" + txArr[0].hash + '">');
           document.getElementById("progress-div").style.display = "none";
+          localStorage.removeItem("data_to_upload");
           return;
         }
         // https://pool.viabtc.com/tools/BCH/broadcast/
