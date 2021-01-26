@@ -163,7 +163,11 @@ async function getTX() {
       }
     } catch (e) {
       fileContents.set(current_push.slice(0, fcLen - i), i);
-      i = fcLen;
+      i += ((fcLen - i) < (current_push.length)) ? (fcLen - i) : current_push.length;
+      if (i != fcLen) {
+        setError("Partially uploaded file")
+        return;
+      }
     }
   }
   var calculatedChecksum = calculateChecksum(fileContents, calculatedChecksum);
