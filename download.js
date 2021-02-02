@@ -207,7 +207,7 @@ async function getTX() {
   if (shouldCompress) {
     const uncompressedLen = fileContents[0] | (fileContents[1] << 8) | (fileContents[2] << 16) | (fileContents[3] << 24);
     const buf = Module._malloc(fcLen - 4 + uncompressedLen);
-    const c2Buf = buf + fcLen;
+    const c2Buf = buf + fcLen - 4;
     Module.HEAPU8.set(fileContents.subarray(4), buf);
     const decompressOut = Module._lzma_decompress(buf, fcLen - 4, c2Buf, uncompressedLen);
     fcLen = uncompressedLen;
