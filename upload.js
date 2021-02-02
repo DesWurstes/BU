@@ -386,7 +386,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
         clearError();
         localStorage.setItem("first_utxo", JSON.stringify(utxo));
         localStorage.setItem("current_started_upload", privateKey.toWIF());
-        var txArr = [], fileIndex = 0, tx = new bitcore.Transaction().feePerKb(1500);
+        var txArr = [], fileIndex = 0, tx = new bitcore.Transaction().feePerKb(1200);
         // Sometimes the API can't calculate scriptPubKey. Here's the alternative calculation:
         // const scriptPubKey =  utxo[0]["scriptPubKey"];
         const scriptPubKey = "76a914" + encodeHex(addressBitcore.toBuffer().subarray(1)) + "88ac";
@@ -485,7 +485,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
           console.log(tx.serialize());
           const txHash = tx.hash;
           //console.log(txHash);
-          let tx2 = new bitcore.Transaction().feePerKb(1500);
+          let tx2 = new bitcore.Transaction().feePerKb(1200);
           //if (tx._changeIndex != -2) {
           if (outsInThisTX === 0) {
             tx2 = tx2.from({
