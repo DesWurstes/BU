@@ -583,6 +583,8 @@ function finalize(txArr, txArrLen, privateKey, lastTx) {
       if (this.responseText.includes("too-long")) {
         index--;
         setStatus("Waiting for the next block. May take a few minutes.");
+      } else if (this.responseText.includes("inputs") || this.responseText.includes("already")) {
+        // Possibly a republish
       } else {
         clearError();
         // TODO: Keep the number of transactions that were pushed successfully
@@ -618,16 +620,16 @@ function finalize(txArr, txArrLen, privateKey, lastTx) {
         }
         // https://pool.viabtc.com/tools/BCH/broadcast/
         // https://bch.blockdozer.com/api/tx/send
-        xhr.open("POST", "https://bch.coin.space/api/tx/send", true);
+        xhr.open("POST", "https://rest.bitcoin.com/v2/rawtransactions/sendRawTransaction", true);
         // xhr.open("POST", "https://tbch.blockdozer.com/api/tx/send", true);
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send("{\"rawtx\":\"" + txArr[index].serialize() + "\"}");
+        xhr.send("{\"hexes\":[\"" + txArr[index].serialize() + "\"]}");
       });
     }
-    xhr.open("POST", "https://bch.coin.space/api/tx/send", true);
+    xhr.open("POST", "https://rest.bitcoin.com/v2/rawtransactions/sendRawTransaction", true);
     // xhr.open("POST", "https://test-bch-insight.bitpay.com/api/tx/send", true);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send("{\"rawtx\":\"" + txArr[0].serialize() + "\"}");
+    xhr.send("{\"hexes\":[\"" + txArr[0].serialize() + "\"]}");
   }
 }
 
