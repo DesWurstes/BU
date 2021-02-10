@@ -231,7 +231,7 @@ async function getTX() {
   fileContents = fileContents.subarray(i);
   var date = new Date(time * 1000).toString();
   date = date.substring(0, date.lastIndexOf(":"));
-  document.getElementById("fileName").innerText = document.getElementById("download-data-button").download = ToString(FromUTF8(name));
+  document.title = (document.getElementById("fileName").innerText = document.getElementById("download-data-button").download = ToString(FromUTF8(name))) + " | BlockUpload.io";
   document.getElementById("description").innerText = ToString(FromUTF8(description));
   document.getElementById("date").innerText = date;
   /*if (shouldEncrypt) {
