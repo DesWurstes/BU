@@ -139,7 +139,7 @@ async function getTX() {
     setError("Implementation error: Too long filename!");
     return;
   }
-  console.log("Intra-compressed length: " + i);
+  console.log("Intra-compressed length: " + fcLen);
   var fileContents = new Uint8Array(fcLen);
   var current_push = data.slice(i);
   const first_pushlen = current_push.length;
@@ -283,7 +283,13 @@ function decodeP2SHPush(str) {
     if ((c > 75) || (lim > strlen)) {
       return [];
     }
-    arr.push(...str.slice(stri + 1, lim));
+    puush = str.slice(stri + 1, lim);
+    // 33 byte pubkeys only
+    // arr.filter(item => console.log(item))
+    // or just skip the last one
+    if (puush.length != 33) {
+      arr.push(...puush);
+    }
     if (lim == strlen) {
       return arr;
     }
@@ -306,8 +312,8 @@ function getVinPushes(tx) {
       // nonpush spend can't both be inputs of a tx.
       return [];
     }
-    // Assume last 36 bytes: Push + 33 + numberOfPkeys + CHECKMULTISIG
-    arr.push(...decodeP2SHPush(decodeHex(tx2.slice(tx2.lastIndexOf(" 51") + 3, -72))));
+    // Usually the last 36 bytes: Push + 33 + numberOfPkeys + CHECKMULTISIG
+    arr.push(...decodeP2SHPush(decodeHex(tx2.slice(tx2.lastIndexOf(" 51") + 3, -4))));
   }
   return arr;
 }
