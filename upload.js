@@ -313,7 +313,7 @@ function buttonContinue() {
   //const incompleteUploadFile = localStorage.getItem("current_upload_file");
   // TODO: Ask for a refund address
   //}
-  // TODO: DEBUG
+  // TODO: RECOVER
   // const currentPrivateKey = bitcore.PrivateKey.fromWIF("");
 
   const currentPrivateKey = new bitcore.PrivateKey();
@@ -366,6 +366,7 @@ function paymentMade(privateKey, publicKey, address, amount, finalFile, numberOf
           setError("Server error, please try again: <br><samp><sup><sub>" + this.responseText + "<br>" + this.statusText + "</sub></sup></samp>");
           return;
         }
+        // TODO RECOVER
         const utxo = JSON.parse(this.responseText);
         this.responseText = null;
         // TODO: DEBUG
