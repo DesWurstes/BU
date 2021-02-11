@@ -1,0 +1,8 @@
+Others:
+
+"MultiSigScriptHashInput.PUBKEY_SIZE =" must be 66, not 34
+
+Temporarily, before version bump:
+
+https://github.com/bitpay/bitcore/pull/3072/files
+
